@@ -13,9 +13,9 @@ async function resendSms(req: RequestExtended, res: Response): Promise<unknown> 
 
   try {
     const { 'user-id': user_id } = req.permission_variables
-    const { sms_mfa_enabled, sms_otp_secret, phone_number } = await selectAccountByUserId(user_id)
+    const { sms_otp_secret, phone_number } = await selectAccountByUserId(user_id)
 
-    if (!sms_mfa_enabled || !sms_otp_secret || !phone_number) {
+    if (!sms_otp_secret || !phone_number) {
       return res.boom.badRequest('SMS MFA is not enabled.')
     }
 
