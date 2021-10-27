@@ -1,6 +1,5 @@
 import { authenticator } from 'otplib'
 import { Response } from 'express'
-
 import { asyncWrapper, selectAccountByUserId } from '@shared/helpers'
 import { deleteOtpSecret } from '@shared/queries'
 import { RequestExtended } from '@shared/types'
@@ -31,6 +30,7 @@ async function disableMfa(req: RequestExtended, res: Response): Promise<unknown>
   } catch (err) {
     return res.boom.badRequest(err?.message || 'Failed to disable MFA')
   }
+
 }
 
 export default asyncWrapper(disableMfa)

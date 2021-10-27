@@ -22,6 +22,7 @@ const accountFragment = gql`
     user {
       id
       display_name
+      username
       ${JWT.CUSTOM_FIELDS.join('\n\t\t\t')}
     }
   }
@@ -113,6 +114,14 @@ export const selectAccountByTicket = gql`
     }
   }
   ${accountFragment}
+`
+
+export const selectUserByUsername = gql`
+  query($username: String = "") {
+    users(where: { username: { _eq: $username } }) {
+      username
+    }
+  }
 `
 
 export const insertRefreshToken = gql`
