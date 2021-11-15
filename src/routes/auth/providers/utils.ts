@@ -89,7 +89,7 @@ const manageProviderStrategy = (
     // noop continue to register user
   }
 
-  let username = profile.username
+  let username = profile.username ? profile.username.trim().toLowerCase() : undefined
 
   const generateRandomSequence = () => {
     return (Math.floor(Math.random() * 10000) + 10000).toString().substring(1)
