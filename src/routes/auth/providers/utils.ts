@@ -7,11 +7,10 @@ import { PROVIDERS, APPLICATION, REGISTRATION } from '@shared/config'
 import {
   insertAccount,
   insertAccountProviderToUser,
-  selectAccountByUserId,
   selectAccountProvider,
   selectUserByUsername
 } from '@shared/queries'
-import { getEndURLOperator, selectAccountByEmail } from '@shared/helpers'
+import { getEndURLOperator, selectAccountByEmail, selectAccountByUserId } from '@shared/helpers'
 import { request } from '@shared/request'
 import {
   InsertAccountData,
@@ -70,9 +69,11 @@ const manageProviderStrategy = (
     // try fetching the account using email
     // if we're unable to fetch the account using the email
     // we'll throw out of this try/catch
-    let account = req.user as AccountData
+    let account = await selectAccountByUserId(req.permission_variables?.["user-id"])
+    console.log('account in middleware: ', account );
 
     if (!account) account = await selectAccountByEmail(email as string)
+    console.log('account: ', account);
 
     // account was successfully fetched
     // add provider and activate account
@@ -224,7 +225,7 @@ export const initProvider = <T extends Strategy>(
             callbackURL: `${APPLICATION.SERVER_URL}/auth/providers/${strategyName}/callback`,
             passReqToCallback: true
           },
-          manageProviderStrategy(strategyName, transformProfile, res)
+          manageProviderStrategy(strategyName, transformProfile, req)
         )
       )
 
