@@ -7,6 +7,7 @@ import { PROVIDERS, APPLICATION, REGISTRATION } from '@shared/config'
 import {
   insertAccount,
   insertAccountProviderToUser,
+  selectAccountByUserId,
   selectAccountProvider,
   selectUserByUsername
 } from '@shared/queries'
@@ -37,7 +38,8 @@ interface InitProviderSettings {
 
 const manageProviderStrategy = (
   provider: string,
-  transformProfile: TransformProfileFunction
+  transformProfile: TransformProfileFunction,
+  req: RequestExtended
 ) => async (
   _req: RequestExtended,
   _accessToken: string,
@@ -64,10 +66,13 @@ const manageProviderStrategy = (
   // See if email already exist.
   // if email exist, merge this provider with the current user.
   try {
+
     // try fetching the account using email
     // if we're unable to fetch the account using the email
     // we'll throw out of this try/catch
-    const account = await selectAccountByEmail(email as string)
+    let account = req.user as AccountData
+
+    if (!account) account = await selectAccountByEmail(email as string)
 
     // account was successfully fetched
     // add provider and activate account
@@ -209,7 +214,7 @@ export const initProvider = <T extends Strategy>(
 
   let registered = false
 
-  subRouter.use((req, res, next) => {
+  subRouter.use((req: RequestExtended, res, next) => {
     if (!registered) {
       passport.use(
         new strategy(
@@ -219,7 +224,7 @@ export const initProvider = <T extends Strategy>(
             callbackURL: `${APPLICATION.SERVER_URL}/auth/providers/${strategyName}/callback`,
             passReqToCallback: true
           },
-          manageProviderStrategy(strategyName, transformProfile)
+          manageProviderStrategy(strategyName, transformProfile, res)
         )
       )
 
