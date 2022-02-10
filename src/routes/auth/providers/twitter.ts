@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import { Strategy } from 'passport-twitter'
+// import { Strategy } from 'passport-twitter'
+import { Strategy } from 'passport-twitter-oauth2'
 import { initProvider } from './utils'
 import { PROVIDERS, COOKIES } from '@shared/config'
 
@@ -12,7 +13,7 @@ export default (router: Router): void => {
     Strategy,
     {
       userProfileURL:
-        'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
+        'https://api.twitter.com/2/account/verify_credentials.json?include_email=true',
       includeEmail: true
     },
     (req, res, next) => {
