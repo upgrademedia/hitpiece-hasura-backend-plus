@@ -1,6 +1,6 @@
 import { Router } from 'express'
 // import { Strategy } from 'passport-twitter'
-import { Strategy } from 'passport-twitter-oauth2'
+import { Strategy } from 'passport-twitter-oauth2.0'
 import { initProvider } from './utils'
 import { PROVIDERS, COOKIES } from '@shared/config'
 
