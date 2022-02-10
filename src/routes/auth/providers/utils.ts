@@ -70,10 +70,7 @@ const manageProviderStrategy = (
     // if we're unable to fetch the account using the email
     // we'll throw out of this try/catch
     let account = await selectAccountByUserId(req.permission_variables?.["user-id"])
-    console.log('account in middleware: ', account );
-
     if (!account) account = await selectAccountByEmail(email as string)
-    console.log('account: ', account);
 
     // account was successfully fetched
     // add provider and activate account
