@@ -53,10 +53,6 @@
           "value": "__SMS_MFA_ENABLED__"
         },
         {
-          "name": "SPOTIFY_ENABLED",
-          "value": "__SPOTIFY_ENABLED__"
-        },
-        {
           "name": "DATABASE_URL",
           "value": "__DATABASE_URL__"
         },
@@ -87,10 +83,6 @@
         {
           "name": "OTP_ISSUER",
           "value": "__OTP_ISSUER__"
-        },
-        {
-          "name": "SPOTIFY_CLIENT_ID",
-          "value": "__SPOTIFY_CLIENT_ID__"
         },
         {
           "name": "HASURA_ENDPOINT",
@@ -159,10 +151,6 @@
         {
           "name": "DEFAULT_ALLOWED_USER_ROLES",
           "value": "__DEFAULT_ALLOWED_USER_ROLES__"
-        },
-        {
-          "name": "SPOTIFY_CLIENT_SECRET",
-          "value": "__SPOTIFY_CLIENT_SECRET__"
         },
         {
           "name": "REGISTRATION_CUSTOM_FIELDS",

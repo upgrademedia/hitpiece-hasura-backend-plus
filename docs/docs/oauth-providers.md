@@ -12,7 +12,6 @@ The following OAuth providers are supported:
 - Apple
 - Twitter
 - LinkedIn
-- Spotify
 - Windows Live
 
 When a user register using an OAuth provider Hasura Backend Plus creates the user and account in the local database.

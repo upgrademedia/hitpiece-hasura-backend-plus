@@ -448,17 +448,3 @@ Windows Live client ID.
 ### `WINDOWSLIVE_CLIENT_SECRET`
 
 Windows Live client secret.
-
-## Spotify (OAuth)
-
-### `SPOTIFY_ENABLED`
-
-Enables Spotify as OAuth provider.
-
-### `SPOTIFY_CLIENT_ID`
-
-Spotify client ID.
-
-### `SPOTIFY_CLIENT_SECRET`
-
-Spotify client secret.

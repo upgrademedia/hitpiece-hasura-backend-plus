@@ -121,19 +121,6 @@ const PROVIDERS = {
             return process.env.WINDOWS_LIVE_CLIENT_SECRET || ''
           }
         }
-  },
-
-  get spotify() {
-    return !returnBooleanEnvVar(['SPOTIFY_ENABLE', 'SPOTIFY_ENABLED'], false)
-      ? null
-      : {
-          get clientID() {
-            return process.env.SPOTIFY_CLIENT_ID || ''
-          },
-          get clientSecret() {
-            return process.env.SPOTIFY_CLIENT_SECRET || ''
-          }
-        }
   }
 }
 

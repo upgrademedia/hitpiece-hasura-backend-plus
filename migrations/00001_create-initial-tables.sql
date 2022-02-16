@@ -108,4 +108,4 @@ INSERT INTO auth.roles (role)
     VALUES ('user'), ('anonymous'), ('me') ON CONFLICT DO NOTHING;
 
 INSERT INTO auth.providers (provider)
-    VALUES ('github'), ('facebook'), ('twitter'), ('google'), ('apple'),  ('linkedin'), ('windowslive'), ('spotify') ON CONFLICT DO NOTHING;
+    VALUES ('github'), ('facebook'), ('twitter'), ('google'), ('apple'),  ('linkedin'), ('windowslive') ON CONFLICT DO NOTHING;
