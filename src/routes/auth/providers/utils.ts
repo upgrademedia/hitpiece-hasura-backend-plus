@@ -65,11 +65,10 @@ const manageProviderStrategy = (
   // See if email already exist.
   // if email exist, merge this provider with the current user.
   try {
-
     // try fetching the account using email
     // if we're unable to fetch the account using the email
     // we'll throw out of this try/catch
-    let account = await selectAccountByUserId(req.permission_variables?.["user-id"])
+    let account = await selectAccountByUserId(req.permission_variables?.['user-id'])
     if (!account) account = await selectAccountByEmail(email as string)
 
     // account was successfully fetched

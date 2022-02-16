@@ -11,6 +11,7 @@ import { limiter } from './limiter'
 import router from './routes'
 import passport from 'passport'
 import { authMiddleware } from './middlewares/auth'
+import session from 'express-session'
 
 const app = express()
 
@@ -28,6 +29,15 @@ app.use(helmet())
 app.use(json())
 app.use(cors({ credentials: true, origin: true }))
 app.use(fileUpload())
+app.use(
+  session({
+    secret: COOKIES.SECRET,
+    cookie: {
+      secure: COOKIES.SECURE,
+      sameSite: COOKIES.SAME_SITE
+    }
+  })
+)
 
 app.use(passport.initialize())
 
