@@ -12,7 +12,6 @@ import router from './routes'
 import passport from 'passport'
 import { authMiddleware } from './middlewares/auth'
 import session from 'express-session'
-import * as pgSession from 'connect-pg-simple'
 const PgSimple = require('connect-pg-simple')
 
 const app = express()
