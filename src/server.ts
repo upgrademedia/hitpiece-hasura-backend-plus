@@ -31,11 +31,15 @@ app.use(json())
 app.use(cors({ credentials: true, origin: true }))
 app.use(fileUpload())
 
+console.log('process.env.DATABASE_URL: ', process.env.DATABASE_URL)
+
 const pgStoreConfig = {
   pgPromise: require('pg-promise')({ promiseLib: require('bluebird') })({
     conString: process.env.DATABASE_URL
   })
 }
+
+console.log('pgStoreConfig: ', pgStoreConfig)
 
 const pgSession = PgSimple(session)
 app.use(
