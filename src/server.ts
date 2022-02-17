@@ -12,6 +12,7 @@ import router from './routes'
 import passport from 'passport'
 import { authMiddleware } from './middlewares/auth'
 import session from 'express-session'
+import * as pgSession from 'connect-pg-simple'
 const PgSimple = require('connect-pg-simple')
 
 const app = express()
@@ -31,20 +32,21 @@ app.use(json())
 app.use(cors({ credentials: true, origin: true }))
 app.use(fileUpload())
 
-const pgStoreConfig = {
-  pgPromise: require('pg-promise')({ promiseLib: require('bluebird') })({
-    conString: process.env.DATABASE_URL
-  })
-}
-
 const pgSession = PgSimple(session)
 app.use(
   session({
-    store: new pgSession(pgStoreConfig),
+    store: new pgSession({
+      conString: process.env.DATABASE_URL,
+      schemaName: 'public',
+      tableName: 'session'
+    }),
     secret: COOKIES.SECRET,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
       secure: COOKIES.SECURE,
-      sameSite: COOKIES.SAME_SITE
+      sameSite: COOKIES.SAME_SITE,
+      maxAge: 30 * 24 * 60 * 60 * 1000
     }
   })
 )
