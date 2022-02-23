@@ -160,7 +160,7 @@ export const loginSchemaMagicLink = extendedJoi.object({
   token: Joi.string() // hCaptcha code
 })
 
-export const forgotSchema = Joi.object({ email: emailRule })
+export const forgotSchema = Joi.object({ email: emailRule, token: Joi.string() })
 
 export const verifySchema = Joi.object({ ...ticketFields })
 

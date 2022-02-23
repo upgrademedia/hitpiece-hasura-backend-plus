@@ -15,6 +15,8 @@ async function resendConfirmation(req: Request, res: Response): Promise<unknown>
   }
 
   const body = req.body
+  const next_url = req.body.next_url as string
+  delete req.body.next_url
 
   try {
     const account = await selectAccount(body)
@@ -42,9 +44,20 @@ async function resendConfirmation(req: Request, res: Response): Promise<unknown>
     }
 
     // use display name from `user_data` if available
-    const display_name = user.display_name || user.email
+    const display_name = user.display_name || ""
 
     await updateAccountTicket(account.id, ticket, ticket_expires_at)
+
+    let activateUrl = `${APPLICATION.SERVER_URL}/auth/activate?ticket=${ticket}`
+    if (next_url) activateUrl = `${activateUrl}&nextURL=${next_url}`
+    let locals : {
+      display_name: string | undefined
+      url: string
+
+    } = {
+      display_name,
+      url: activateUrl,
+    }
 
     await emailClient.send({
       template: 'activate-account',
@@ -57,11 +70,7 @@ async function resendConfirmation(req: Request, res: Response): Promise<unknown>
           }
         }
       },
-      locals: {
-        display_name,
-        ticket,
-        url: APPLICATION.SERVER_URL
-      }
+      locals
     })
 
     return res.status(204).send()

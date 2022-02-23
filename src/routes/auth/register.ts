@@ -13,14 +13,14 @@ import { InsertAccountData, UserData, Session } from '@shared/types'
 require('dotenv').config()
 
 async function registerAccount(req: Request, res: Response): Promise<unknown> {
-  
+
   const body = req.body
 
-  const next_url = req.body.next_url as string 
+  const next_url = req.body.next_url as string
 
   // remove next url for validation
   delete req.body.next_url
-  
+
   const useCookie = typeof body.cookie !== 'undefined' ? body.cookie : true
 
   const { token } = await getRegisterSchema().validateAsync(body)
@@ -114,12 +114,12 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
         }
       }
     })
-    
+
   } catch (e) {
     console.error('Error inserting user account')
     console.error(e)
     return res.boom.badImplementation('Error inserting user account')
-  }  
+  }
 
   const account = accounts.insert_auth_accounts.returning[0]
 
@@ -129,7 +129,7 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
     email: account.email,
     avatar_url: account.user.avatar_url
   }
-  
+
 
   if (!REGISTRATION.AUTO_ACTIVATE_NEW_USERS && AUTHENTICATION.VERIFY_EMAILS) {
     if (!APPLICATION.EMAILS_ENABLE) {
@@ -137,8 +137,8 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
     }
 
     // use display name from `user_data` if available
-    const display_name = 'display_name' in user_data ? user_data.display_name : email
-    
+    const display_name = 'display_name' in user_data ? user_data.display_name : ""
+
 
     if (typeof password === 'undefined') {
       try {
@@ -191,19 +191,17 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
       return res.boom.badImplementation()
     }
 
+    let activateUrl = `${APPLICATION.SERVER_URL}/auth/activate?ticket=${ticket}`
+    if (next_url) activateUrl = `${activateUrl}&nextURL=${next_url}`
+
     let locals : {
       display_name: string
-      ticket:string
       url: string
-      next_url?: string
 
     } = {
       display_name,
-      ticket,
-      url: APPLICATION.SERVER_URL,      
+      url: activateUrl,
     }
-
-    if (next_url) locals = {...locals, next_url: next_url}    
 
     try {
       await emailClient.send({
