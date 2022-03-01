@@ -9,7 +9,9 @@ import {
   insertAccountProviderToUser,
   selectAccountProvider,
   selectUserByUsername,
-  updateAccountProviderToUser
+  updateAccountProviderToUser,
+  updateClaimPoints,
+  getUserIdByAccountId
 } from '@shared/queries'
 import { getEndURLOperator, selectAccountByEmail, selectAccountByUserId } from '@shared/helpers'
 import { request } from '@shared/request'
@@ -104,6 +106,21 @@ const manageProviderStrategy = (
         account_id: account.id
       }
     )
+
+    try {
+      let userData: {users: {id: string}[]} = await request(getUserIdByAccountId, {account_id: account.id})
+      try {
+        const result: {addPoints: {success: boolean}} = await request(updateClaimPoints, {userId: userData.users?.[0].id, addType: "SocialLink"})
+        if (!result.addPoints.success) {
+          console.log("Adding Points failed");        
+        }
+      } catch (e) {
+        console.log(e);      
+      }  
+    } catch (e){
+      console.log(e);      
+    } 
+
     return done(null, insertAccountProviderToUserData.insert_auth_account_providers_one.account)
   } catch (error) {
     // We were unable to fetch the account

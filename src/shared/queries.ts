@@ -81,6 +81,22 @@ export const updateAccountProviderToUser = gql`
   ${accountFragment}
 `
 
+export const updateClaimPoints = gql`
+  mutation updateClaimPoints($addType: String!, $userId: String!) {
+    addPoints(args: {addType: $addType, userId: $userId}) {
+      success
+    }
+  }
+`
+
+export const getUserIdByAccountId = gql`
+  query GetUserIdByAccountId($account_id: uuid!) {
+    users(where: {account: {id: {_eq: $account_id}}}) {
+      id
+    }
+  }
+`
+
 export const setNewTicket = gql`
   mutation($ticket: uuid!, $ticket_expires_at: timestamptz!, $user_id: uuid!) {
     update_auth_accounts(
