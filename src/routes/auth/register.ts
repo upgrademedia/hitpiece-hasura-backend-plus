@@ -17,14 +17,20 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
 
   const body = req.body
 
+  console.log("body", body);
+  
+
   const next_url = req.body.next_url as string
+  const referral_code = req.body.referral_code as string
 
   // remove next url for validation
   delete req.body.next_url
+  // remove referral_code for validation
+  delete req.body.referral_code
 
   const useCookie = typeof body.cookie !== 'undefined' ? body.cookie : true
 
-  const { token } = await getRegisterSchema().validateAsync(body)
+  const { token } = await getRegisterSchema().validateAsync(body) 
 
   let passCaptcha = await hcaptchaVerify(token)
 
@@ -96,7 +102,7 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
           data: accountRoles
         },
         user: {
-          data: { ...user_data }
+          data: { ...user_data, referred_by: referral_code }
         }
       }
     })
