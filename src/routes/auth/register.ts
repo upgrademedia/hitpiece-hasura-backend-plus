@@ -17,9 +17,6 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
 
   const body = req.body
 
-  console.log("body", body);
-  
-
   const next_url = req.body.next_url as string
   const referral_code = req.body.referral_code as string
 
