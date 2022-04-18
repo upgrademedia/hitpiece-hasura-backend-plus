@@ -376,6 +376,36 @@ export const selectAccountProvider = gql`
   ${accountFragment}
 `
 
+export const GetAccountIdByUserIdQuery = gql`
+  query GetAccountIdByUserIdQuery($userId: uuid = "") {
+    auth_accounts(where: {user_id: {_eq: $userId}}) {
+      id
+    }
+  }
+`
+
+export const InsertAuthProviderMutation = gql`
+  mutation InsertAuthProviderMutation(
+    $account_id: uuid!
+    $auth: jsonb!
+    $auth_provider: String!
+    $auth_provider_unique_id: String!
+    $raw_data: jsonb!
+  ) {
+    insert_auth_account_providers_one(
+      object: {
+        account_id: $account_id
+        auth: $auth
+        auth_provider: $auth_provider
+        auth_provider_unique_id: $auth_provider_unique_id
+        raw_data: $raw_data
+      }
+    ) {
+      id
+    }
+  }
+`
+
 export const updateAccountByEmail = gql`
   mutation updateAccountByEmail($account_email: citext!, $account: auth_accounts_set_input!) {
     update_auth_accounts(where: { email: { _eq: $account_email } }, _set: $account) {

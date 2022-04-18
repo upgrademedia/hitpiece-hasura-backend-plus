@@ -66,5 +66,11 @@ export const APPLICATION = {
   },
   get HCAPTCHA_LOCAL_RESPONSE() {
     return '10000000-aaaa-bbbb-cccc-000000000001'
+  },
+  get TWITTER_CLIENT_ID() {
+    return process.env.TWITTER_CLIENT_ID || ''
+  },
+  get TWITTER_CLIENT_SECRET() {
+    return process.env.TWITTER_CLIENT_SECRET || ''
   }
 }

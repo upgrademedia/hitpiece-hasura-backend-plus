@@ -1,6 +1,6 @@
 import express, { RequestHandler, Response, Router } from 'express'
 import passport, { Profile } from 'passport'
-import { VerifyCallback } from 'passport-oauth2'
+import OAuth2Strategy, { VerifyCallback } from 'passport-oauth2'
 import { Strategy } from 'passport'
 
 import { PROVIDERS, APPLICATION, REGISTRATION } from '@shared/config'
@@ -9,7 +9,9 @@ import {
   insertAccountProviderToUser,
   selectAccountProvider,
   selectUserByUsername,
-  updateAccountProviderToUser
+  updateAccountProviderToUser,
+  GetAccountIdByUserIdQuery,
+  InsertAuthProviderMutation
 } from '@shared/queries'
 import { getEndURLOperator, selectAccountByEmail, selectAccountByUserId } from '@shared/helpers'
 import { request } from '@shared/request'
@@ -192,8 +194,11 @@ const providerCallback = async (req: RequestExtended, res: Response): Promise<vo
   let refresh_token = ''
   try {
     refresh_token = await setRefreshToken(res, account.id, true)
+    if (!refresh_token) {
+      return res.redirect(PROVIDERS.REDIRECT_FAILURE)
+    }
   } catch (e) {
-    res.redirect(PROVIDERS.REDIRECT_FAILURE)
+    return res.redirect(PROVIDERS.REDIRECT_FAILURE)
   }
 
   const url_operator = getEndURLOperator({
@@ -248,17 +253,69 @@ export const initProvider = <T extends Strategy>(
 
   subRouter.use((req: RequestExtended, res, next) => {
     if (!registered) {
-      passport.use(
-        new strategy(
-          {
-            ...PROVIDERS[strategyName],
-            ...options,
-            callbackURL: `${APPLICATION.SERVER_URL}/auth/providers/${strategyName}/callback`,
-            passReqToCallback: true
-          },
-          manageProviderStrategy(strategyName, transformProfile)
+      if (strategyName === "twitter") {
+        const strategy = new OAuth2Strategy({         
+          authorizationURL: 'https://twitter.com/i/oauth2/authorize',
+          tokenURL: 'https://api.twitter.com/2/oauth2/token',
+          clientID: APPLICATION.TWITTER_CLIENT_ID,          
+          clientSecret: APPLICATION.TWITTER_CLIENT_SECRET,
+          callbackURL: `${APPLICATION.SERVER_URL}/auth/providers/${strategyName}/callback`,          
+          state: "unknown_state",          
+          pkce: true,
+          scope: ['users.read', 'tweet.read', 'offline.access'],
+        }, async (_accessToken: string, _refreshToken: string, profile: Profile, done: any)=> {
+          try {
+            const options = {
+              headers: {
+                  Authorization: 'Bearer ' + _accessToken,
+              },
+              method: 'GET'
+            };          
+            const rest = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url', options)
+            const rawData: {
+              data: {
+                id: string
+                name: string
+                username: string
+                profile_image_url: string
+              }
+            } = await rest.json()
+  
+            const userId = req.query.userId
+            const accountData = await request<{auth_accounts: {id: string}[]}>(GetAccountIdByUserIdQuery, {userId})            
+            const account_id = accountData.auth_accounts?.[0].id  
+            if (!account_id) return done(null, false)
+            
+            const result = await request<{insert_auth_account_providers_one: {id: string}}>(InsertAuthProviderMutation, {
+              account_id, 
+              auth: {_accessToken, _refreshToken},
+              auth_provider: strategyName,
+              auth_provider_unique_id: rawData.data.id,
+              raw_data:JSON.stringify({...rawData.data, screen_name: rawData.data.username})
+            })            
+            if (!result.insert_auth_account_providers_one.id) return done(null, false)   
+            return done(null, true)
+          } catch (e) {
+            console.error(e);
+            return done(null, false)
+          }          
+        })
+        strategy.name = 'twitter'        
+        passport.use( strategy )
+
+      } else {
+        passport.use(
+          new strategy(
+            {
+              ...PROVIDERS[strategyName],
+              ...options,
+              callbackURL: `${APPLICATION.SERVER_URL}/auth/providers/${strategyName}/callback`,
+              passReqToCallback: true
+            },
+            manageProviderStrategy(strategyName, transformProfile)
+          )
         )
-      )
+      }
 
       registered = true
     }
@@ -270,7 +327,8 @@ export const initProvider = <T extends Strategy>(
   const handlers = [
     passport.authenticate(strategyName, {
       failureRedirect: PROVIDERS.REDIRECT_FAILURE,
-      session: false
+      session: false,
+      successRedirect: `${APPLICATION.REDIRECT_URL_SUCCESS}&nextURL=/royalty/detail`,
     }),
     providerCallback
   ]
