@@ -22,6 +22,12 @@ export interface Claims {
   [key: string]: ClaimValueType
 }
 
+
+/**
+ * SignUpType
+ */
+export type SingUpType = "ArtistSignUp" | "UserSignUp"
+
 /**
  * PermissionVariables interface.
  */
