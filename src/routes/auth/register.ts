@@ -9,7 +9,7 @@ import { setRefreshToken } from '@shared/cookies'
 import { getRegisterSchema, getRegisterSchemaMagicLink } from '@shared/validation'
 import { request } from '@shared/request'
 import { v4 as uuidv4 } from 'uuid'
-import { InsertAccountData, UserData, Session, SingUpType } from '@shared/types'
+import { InsertAccountData, UserData, Session, SignUpType } from '@shared/types'
 import { hcaptchaVerify } from '@shared/hcaptcha'
 require('dotenv').config()
 
@@ -19,7 +19,7 @@ async function registerAccount(req: Request, res: Response): Promise<unknown> {
 
   const next_url = req.body.next_url as string
 
-  const signup_type = req.body.signup_type as SingUpType  // ArtistSignUp or UserSignUp
+  const signup_type = req.body.signup_type as SignUpType  // ArtistSignUp or UserSignUp
 
   if (!signup_type) return res.boom.badRequest('SignUp type is not acceptable')
 
