@@ -40,9 +40,13 @@ async function walletSignup(req: RequestExtended, res: Response): Promise<unknow
   
   let account = null
 
+  const ticket = uuidv4()
+  const ticket_expires_at = new Date(+new Date() + 60 * 60 * 1000).toISOString()
+  
   try {
     const accountResponse = await request<{auth_accounts: AccountData[]}>(getAccountByWalletAddress, {address})
   
+
 
     if(accountResponse.auth_accounts.length === 0) {
       const defaultRole = REGISTRATION.DEFAULT_USER_ROLE
@@ -56,6 +60,8 @@ async function walletSignup(req: RequestExtended, res: Response): Promise<unknow
           account: {
             data: {
               email: email,
+              ticket:ticket,
+              ticket_expires_at:ticket_expires_at,
               active: REGISTRATION.AUTO_ACTIVATE_NEW_USERS,
               default_role: defaultRole,
               account_roles: {
@@ -92,7 +98,6 @@ async function walletSignup(req: RequestExtended, res: Response): Promise<unknow
     // use display name from `user_data` if available
     const display_name = username
 
-    const ticket = uuidv4()
     // Send Welcome Email
     try {
       await emailClient.send({
