@@ -17,6 +17,8 @@ async function refreshToken({ refresh_token }: RequestExtended, res: Response): 
     return res.boom.unauthorized('Invalid or expired refresh token.')
   }
 
+  console.log("refresh token", refresh_token)
+
   // get account based on refresh token
   const { auth_refresh_tokens } = await request<HasuraData>(selectRefreshToken, {
     refresh_token: refresh_token.value,
@@ -55,7 +57,8 @@ async function refreshToken({ refresh_token }: RequestExtended, res: Response): 
     display_name: account.user.display_name,
     username: account.user.username,
     email: account.email,
-    avatar_url: account.user.avatar_url
+    avatar_url: account.user.avatar_url,
+    active: account.active
   }
   const session: Session = { jwt_token, jwt_expires_in, user }
   if (refresh_token.type === 'cookie') {
