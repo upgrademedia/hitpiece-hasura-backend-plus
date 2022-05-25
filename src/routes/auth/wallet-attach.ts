@@ -1,11 +1,7 @@
 import { Response } from 'express'
 import { request } from '@shared/request'
 import { AccountData, RequestExtended } from '@shared/types'
-<<<<<<< HEAD
 import { asyncWrapper, selectAccountByUserId, selectProviderByWallet, verifySignature } from '@shared/helpers'
-=======
-import { asyncWrapper, selectAccountByUserId, verifySignature } from '@shared/helpers'
->>>>>>> 5e5637e972a74f1325322378a5b65e2b21cb9d46
 import { insertAccountProviderWithUserAccount, setWallet } from '@shared/queries'
 
 
