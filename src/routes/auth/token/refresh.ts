@@ -17,8 +17,6 @@ async function refreshToken({ refresh_token }: RequestExtended, res: Response): 
     return res.boom.unauthorized('Invalid or expired refresh token.')
   }
 
-  console.log("refresh token", refresh_token)
-
   // get account based on refresh token
   const { auth_refresh_tokens } = await request<HasuraData>(selectRefreshToken, {
     refresh_token: refresh_token.value,
