@@ -88,7 +88,6 @@ export const selectAccountByUserId = async (user_id: string | undefined): Promis
 
 export const selectProviderByWallet = async (address: string): Promise<AccountProvider> => {
   const hasuraData = await request<QueryAccountProviderData>(selectAccountProvider, { provider: "wallet", profile_id: address })
-  if (!hasuraData.auth_account_providers[0]) throw new Error('Account does not exist.')
   return hasuraData.auth_account_providers[0]
 }
 /**

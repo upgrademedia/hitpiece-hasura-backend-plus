@@ -19,11 +19,9 @@ async function walletAttach(req: RequestExtended, res: Response): Promise<unknow
 
   const user_id = req.permission_variables?.["user-id"]
   const {address} = req.body as WalletAttachRequest
-  console.log("user_id", user_id)
   //check if email already exists
   const selectedAccount = await selectAccountByUserId(user_id)
-  console.log("selectedAccount", selectedAccount)
-  console.log("!selectedAccount", !selectedAccount)
+
   //even though selectedAccount has result, why !selectedAccount is still false?
   if (!selectedAccount) {
     return res.boom.badRequest('Account does not exist.')
@@ -31,7 +29,7 @@ async function walletAttach(req: RequestExtended, res: Response): Promise<unknow
   
   //validate if wallet already exists
   const selectProvider = await selectProviderByWallet(address)
-  console.log("selectProvider", selectProvider)
+
   if (selectProvider) {
     return res.boom.badRequest('Wallet already exists.')
   }
