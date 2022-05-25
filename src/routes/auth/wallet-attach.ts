@@ -16,8 +16,10 @@ async function walletAttach(req: RequestExtended, res: Response): Promise<unknow
   {
     return res.boom.badImplementation('Invalid Session')
   }
-  const {address, user_id} = req.body as WalletAttachRequest
-  
+
+  const user_id = req.permission_variables?.["user-id"]
+  const {address} = req.body as WalletAttachRequest
+
   //check if email already exists
   const selectedAccount = await selectAccountByUserId(user_id)
   if (!selectedAccount) {
