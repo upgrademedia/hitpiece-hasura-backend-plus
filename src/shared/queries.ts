@@ -168,6 +168,15 @@ export const getAccountByWalletAddress = gql`
   }
   ${accountFragment}
 `
+export const getUnlockableContentByIsrcQuery = gql`
+  query GetUnlockableContentByIsrcQuery($isrc: String!) {
+    isrcs_by_pk(isrc: $isrc) {
+      isrc
+      has_unlockable_content
+      unlockable_url
+    }
+  }
+`
 
 export const setWallet = gql`
   mutation SetWallet($user_id: uuid!, $address: bytea!, $name: String = "") {

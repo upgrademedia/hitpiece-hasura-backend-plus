@@ -1,6 +1,7 @@
 import { COOKIES, REGISTRATION } from './config'
 import { NextFunction, Response } from 'express'
 import {
+  getUnlockableContentByIsrcQuery,
   mutateAccountTicket,
   rotateTicket as rotateTicketQuery,
   selectAccountByEmail as selectAccountByEmailQuery,
@@ -45,6 +46,11 @@ export function generateMessageWithNonce(nonce: string) {
   return `You're about to login with your wallet. We just need to create this signature to verify this is your account. This will not charge your wallet. Security code (you can ignore this): ${nonce}`
 }
 
+//generate nonce
+export function generateMessageWithNonceForUnlockableContent(nonce: string) {
+  return `You're about to reveal unlockable content. We just need to create this signature to verify your account. This will not charge your wallet. Security code (you can ignore this): ${nonce}`
+}
+
 export const getUserDataFromAccount = (account: AccountData) => {
 
   const user: UserData = {
@@ -73,6 +79,27 @@ export const verifySignature = (req: RequestExtended) => {
     sig: signature,
   })
   return addressFromSignature.toLocaleLowerCase() === address.toLocaleLowerCase()
+}
+export const verifySignatureForUnlockableContent = (req: RequestExtended) => {
+  
+  const cookiesInUse = COOKIES.SECRET ? req.signedCookies : req.cookies
+  if (!('nonce' in cookiesInUse)) {
+    return false
+  }
+  let { nonce } = cookiesInUse
+  let {signature, address} = req.body
+  let message = generateMessageWithNonceForUnlockableContent(nonce)
+  const msgBufferHex = bufferToHex(Buffer.from(message, 'utf8'));
+  const addressFromSignature = recoverPersonalSignature({
+    data: msgBufferHex,
+    sig: signature,
+  })
+  return addressFromSignature.toLocaleLowerCase() === address.toLocaleLowerCase()
+}
+export const getUnlockableContentByISRC = async (isrc: string): Promise<{isrc:string, has_unlockable_content:boolean, unlockable_url:string | null}> => {
+  const hasuraData = await request<{isrcs_by_pk:{isrc:string, has_unlockable_content:boolean, unlockable_url:string | null}}>(getUnlockableContentByIsrcQuery, { isrc })
+  if (!hasuraData.isrcs_by_pk) throw new Error('Account does not exist.')
+  return hasuraData.isrcs_by_pk
 }
 export const selectAccountByEmail = async (email: string): Promise<AccountData> => {
   const hasuraData = await request<QueryAccountData>(selectAccountByEmailQuery, { email })
@@ -125,6 +152,7 @@ export const selectAccount = async (httpBody: {
     }
   }
 }
+
 
 /**
  * Password hashing function.

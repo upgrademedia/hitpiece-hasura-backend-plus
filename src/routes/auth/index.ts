@@ -18,6 +18,8 @@ import magicLink from './magic-link'
 import smsMfa from './mfa/sms'
 import resendConfirmation from './resend-confirmation'
 import getNonce from './get-nonce'
+import getNonceForUnlockableContent from './get-nonce-for-unlockable-content'
+import revealUnlockableContent from './reveal-unlockable-content'
 import walletLogin from './wallet-login'
 import walletSignup from './wallet-signup'
 import walletAttach from './wallet-attach'
@@ -46,6 +48,8 @@ router.post('/resend-confirmation', resendConfirmation)
 router
   .post('/login', loginAccount)
   .post('/get-nonce', getNonce)
+  .post('/get-nonce-for-unlockable-content', getNonceForUnlockableContent)
+  .post('/reveal-unlockable-content', revealUnlockableContent)
   .post('/wallet-login', walletLogin)
   .post('/wallet-signup', walletSignup)
   .post('/wallet-attach', walletAttach)
