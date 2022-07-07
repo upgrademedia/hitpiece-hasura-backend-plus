@@ -174,6 +174,13 @@ export const getUnlockableContentByIsrcQuery = gql`
       isrc
       has_unlockable_content
       unlockable_url
+      contract
+      token_id
+      contractByContract {
+        contract_abi {
+          abi
+        }
+      }
     }
   }
 `

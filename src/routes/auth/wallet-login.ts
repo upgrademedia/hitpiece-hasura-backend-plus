@@ -79,7 +79,6 @@ async function walletLogin(req: RequestExtended, res: Response): Promise<unknown
   if (useCookie) session.refresh_token = refresh_token
 
   res.cookie('nonce', null) //empty nonce
-console.log("session", session)
   return res.send(session)
 }
 

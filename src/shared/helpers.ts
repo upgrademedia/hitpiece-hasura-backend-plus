@@ -96,8 +96,22 @@ export const verifySignatureForUnlockableContent = (req: RequestExtended) => {
   })
   return addressFromSignature.toLocaleLowerCase() === address.toLocaleLowerCase()
 }
-export const getUnlockableContentByISRC = async (isrc: string): Promise<{isrc:string, has_unlockable_content:boolean, unlockable_url:string | null}> => {
-  const hasuraData = await request<{isrcs_by_pk:{isrc:string, has_unlockable_content:boolean, unlockable_url:string | null}}>(getUnlockableContentByIsrcQuery, { isrc })
+
+type UnlockableISRCData = {
+  isrc:string, 
+  has_unlockable_content:boolean, 
+  contract:string|null, 
+  token_id:number|null, 
+  unlockable_url:string | null
+  contractByContract: {
+    contract_abi: {
+      abi:string
+    }
+  }
+}
+
+export const getISRCUnlockableContentByISRC = async (isrc: string): Promise<UnlockableISRCData> => {
+  const hasuraData = await request<{isrcs_by_pk:UnlockableISRCData}>(getUnlockableContentByIsrcQuery, { isrc })
   if (!hasuraData.isrcs_by_pk) throw new Error('Account does not exist.')
   return hasuraData.isrcs_by_pk
 }
