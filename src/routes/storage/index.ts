@@ -5,8 +5,12 @@ import { listGet } from './list_get'
 import { uploadFile } from './upload'
 import { RequestExtended } from '@shared/types'
 import { STORAGE } from '@shared/config'
+import progress from './progress'
 
 const router = Router()
+
+// file upload status route
+router.post('/progress', progress)
 
 router.use((req, res, next) => {
   if (!STORAGE.ENABLED) {
