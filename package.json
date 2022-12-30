@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@hapi/joi": "17.1.1",
-    "@nicokaiser/passport-apple": "^0.2.1",
+    "@nicokaiser/passport-apple": "^2.0.0",
     "@types/connect-pg-simple": "^7.0.0",
     "@types/eth-sig-util": "^2.1.1",
     "archiver": "4.0.1",
