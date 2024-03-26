@@ -46,7 +46,7 @@
     "email-templates": "7.0.4",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-util": "^7.1.4",
-    "express": "4.17.1",
+    "express": "4.19.2",
     "express-boom": "^3.0.0",
     "express-fileupload": "1.1.9",
     "express-rate-limit": "5.1.1",
