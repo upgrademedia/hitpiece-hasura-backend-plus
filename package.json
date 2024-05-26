@@ -33,7 +33,7 @@
     "@nicokaiser/passport-apple": "^0.2.1",
     "@types/connect-pg-simple": "^7.0.0",
     "@types/eth-sig-util": "^2.1.1",
-    "archiver": "4.0.1",
+    "archiver": "7.0.0",
     "aws-sdk": "2.656.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
