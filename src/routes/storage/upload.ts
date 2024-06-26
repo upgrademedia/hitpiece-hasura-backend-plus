@@ -8,6 +8,9 @@ import { s3 } from '@shared/s3'
 import { RequestExtended } from '@shared/types'
 import { fileMetadataUpdate } from '@shared/validation'
 
+import fs from 'fs'
+import path from 'path'
+
 export const uploadFile = async (
   req: RequestExtended,
   res: Response,
@@ -50,7 +53,22 @@ export const uploadFile = async (
     }
 
     try {
-      await s3.upload(upload_params).promise()
+      const upload = s3.upload(upload_params)
+
+      // Create json and write the current uploading status
+      const fileName = key.split('/')[2].split('.')[0]
+      if (!fs.existsSync(path.join(__dirname, '/progress'))) fs.mkdirSync(path.join(__dirname, '/progress'))
+      upload.on('httpUploadProgress', (progress) => {
+        const status = Math.round(progress.loaded / progress.total * 100)
+        fs.writeFileSync(path.join(__dirname, `/progress/${fileName}.json`), JSON.stringify({status}))
+      })
+      await upload.promise()
+
+      // Delete json 10s later after uploaded
+      setTimeout(() => {
+        fs.unlinkSync(path.join(__dirname, `/progress/${fileName}.json`))
+      }, 10000)
+
     } catch (err) {
       console.error('Fail to upload file')
       console.error({ upload_params })
